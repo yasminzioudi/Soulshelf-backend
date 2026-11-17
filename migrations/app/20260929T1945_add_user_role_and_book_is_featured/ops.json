@@ -1,0 +1,125 @@
+[
+  {
+    "id": "column.public.book.isFeatured",
+    "label": "Add column \"isFeatured\" to \"book\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "isFeatured",
+        "table": "book"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"isFeatured\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "book",
+          "isFeatured"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"isFeatured\"",
+        "sql": "ALTER TABLE \"public\".\"book\" ADD COLUMN \"isFeatured\" bool DEFAULT false NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"isFeatured\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "book",
+          "isFeatured"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.user.role",
+    "label": "Add column \"role\" to \"user\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "role",
+        "table": "user"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"role\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "user",
+          "role"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"role\"",
+        "sql": "ALTER TABLE \"public\".\"user\" ADD COLUMN \"role\" text DEFAULT 'USER' NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"role\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "user",
+          "role"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.book.book_isFeatured_idx_4ec5a125",
+    "label": "Create index \"book_isFeatured_idx_4ec5a125\" on \"book\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "book_isFeatured_idx_4ec5a125",
+        "table": "book"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"book_isFeatured_idx_4ec5a125\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"book_isFeatured_idx_4ec5a125\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"book_isFeatured_idx_4ec5a125\"",
+        "sql": "CREATE INDEX \"book_isFeatured_idx_4ec5a125\" ON \"public\".\"book\" (\"isFeatured\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"book_isFeatured_idx_4ec5a125\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"book_isFeatured_idx_4ec5a125\""
+        ]
+      }
+    ]
+  }
+]

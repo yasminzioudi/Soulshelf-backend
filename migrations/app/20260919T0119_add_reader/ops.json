@@ -1,0 +1,407 @@
+[
+  {
+    "id": "table.chapter",
+    "label": "Create table \"chapter\"",
+    "summary": "Creates table \"chapter\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "chapter"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"chapter\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"chapter\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"chapter\"",
+        "sql": "CREATE TABLE \"public\".\"chapter\" (\n  \"bookId\" int4 NOT NULL,\n  \"chapterNum\" int4 NOT NULL,\n  \"content\" text NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"title\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"chapter\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"chapter\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.readingProgress",
+    "label": "Create table \"readingProgress\"",
+    "summary": "Creates table \"readingProgress\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "readingProgress"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"readingProgress\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"readingProgress\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"readingProgress\"",
+        "sql": "CREATE TABLE \"public\".\"readingProgress\" (\n  \"bookId\" int4 NOT NULL,\n  \"currentChapter\" int4 DEFAULT 1 NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  \"userId\" int4 NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"readingProgress\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"readingProgress\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.chapter.chapter_bookId_chapterNum_key",
+    "label": "Add unique constraint on \"chapter\" (bookId, chapterNum)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "chapter_bookId_chapterNum_key",
+        "table": "chapter"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"chapter_bookId_chapterNum_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "chapter_bookId_chapterNum_key",
+          "public",
+          "\"public\".\"chapter\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"chapter_bookId_chapterNum_key\"",
+        "sql": "ALTER TABLE \"public\".\"chapter\" ADD CONSTRAINT \"chapter_bookId_chapterNum_key\" UNIQUE (\"bookId\", \"chapterNum\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"chapter_bookId_chapterNum_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "chapter_bookId_chapterNum_key",
+          "public",
+          "\"public\".\"chapter\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.readingProgress.readingProgress_userId_bookId_key",
+    "label": "Add unique constraint on \"readingProgress\" (userId, bookId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "readingProgress_userId_bookId_key",
+        "table": "readingProgress"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"readingProgress_userId_bookId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "readingProgress_userId_bookId_key",
+          "public",
+          "\"public\".\"readingProgress\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"readingProgress_userId_bookId_key\"",
+        "sql": "ALTER TABLE \"public\".\"readingProgress\" ADD CONSTRAINT \"readingProgress_userId_bookId_key\" UNIQUE (\"userId\", \"bookId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"readingProgress_userId_bookId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "readingProgress_userId_bookId_key",
+          "public",
+          "\"public\".\"readingProgress\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.chapter.chapter_bookId_idx_3eec38a3",
+    "label": "Create index \"chapter_bookId_idx_3eec38a3\" on \"chapter\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "chapter_bookId_idx_3eec38a3",
+        "table": "chapter"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"chapter_bookId_idx_3eec38a3\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"chapter_bookId_idx_3eec38a3\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"chapter_bookId_idx_3eec38a3\"",
+        "sql": "CREATE INDEX \"chapter_bookId_idx_3eec38a3\" ON \"public\".\"chapter\" (\"bookId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"chapter_bookId_idx_3eec38a3\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"chapter_bookId_idx_3eec38a3\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.readingProgress.readingProgress_bookId_idx_3eec38a3",
+    "label": "Create index \"readingProgress_bookId_idx_3eec38a3\" on \"readingProgress\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "readingProgress_bookId_idx_3eec38a3",
+        "table": "readingProgress"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"readingProgress_bookId_idx_3eec38a3\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"readingProgress_bookId_idx_3eec38a3\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"readingProgress_bookId_idx_3eec38a3\"",
+        "sql": "CREATE INDEX \"readingProgress_bookId_idx_3eec38a3\" ON \"public\".\"readingProgress\" (\"bookId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"readingProgress_bookId_idx_3eec38a3\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"readingProgress_bookId_idx_3eec38a3\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.readingProgress.readingProgress_userId_idx_a489d58a",
+    "label": "Create index \"readingProgress_userId_idx_a489d58a\" on \"readingProgress\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "readingProgress_userId_idx_a489d58a",
+        "table": "readingProgress"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"readingProgress_userId_idx_a489d58a\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"readingProgress_userId_idx_a489d58a\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"readingProgress_userId_idx_a489d58a\"",
+        "sql": "CREATE INDEX \"readingProgress_userId_idx_a489d58a\" ON \"public\".\"readingProgress\" (\"userId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"readingProgress_userId_idx_a489d58a\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"readingProgress_userId_idx_a489d58a\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.chapter.chapter_bookId_fkey",
+    "label": "Add foreign key \"chapter_bookId_fkey\" on \"chapter\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "chapter_bookId_fkey",
+        "table": "chapter"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"chapter_bookId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "chapter_bookId_fkey",
+          "public",
+          "\"public\".\"chapter\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"chapter_bookId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"chapter\"\nADD CONSTRAINT \"chapter_bookId_fkey\"\nFOREIGN KEY (\"bookId\")\nREFERENCES \"public\".\"book\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"chapter_bookId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "chapter_bookId_fkey",
+          "public",
+          "\"public\".\"chapter\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.readingProgress.readingProgress_userId_fkey",
+    "label": "Add foreign key \"readingProgress_userId_fkey\" on \"readingProgress\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "readingProgress_userId_fkey",
+        "table": "readingProgress"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"readingProgress_userId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "readingProgress_userId_fkey",
+          "public",
+          "\"public\".\"readingProgress\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"readingProgress_userId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"readingProgress\"\nADD CONSTRAINT \"readingProgress_userId_fkey\"\nFOREIGN KEY (\"userId\")\nREFERENCES \"public\".\"user\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"readingProgress_userId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "readingProgress_userId_fkey",
+          "public",
+          "\"public\".\"readingProgress\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.readingProgress.readingProgress_bookId_fkey",
+    "label": "Add foreign key \"readingProgress_bookId_fkey\" on \"readingProgress\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "readingProgress_bookId_fkey",
+        "table": "readingProgress"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"readingProgress_bookId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "readingProgress_bookId_fkey",
+          "public",
+          "\"public\".\"readingProgress\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"readingProgress_bookId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"readingProgress\"\nADD CONSTRAINT \"readingProgress_bookId_fkey\"\nFOREIGN KEY (\"bookId\")\nREFERENCES \"public\".\"book\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"readingProgress_bookId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "readingProgress_bookId_fkey",
+          "public",
+          "\"public\".\"readingProgress\""
+        ]
+      }
+    ]
+  }
+]

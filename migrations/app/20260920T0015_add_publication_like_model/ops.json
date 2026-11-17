@@ -1,0 +1,245 @@
+[
+  {
+    "id": "table.publicationLike",
+    "label": "Create table \"publicationLike\"",
+    "summary": "Creates table \"publicationLike\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "publicationLike"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"publicationLike\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"publicationLike\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"publicationLike\"",
+        "sql": "CREATE TABLE \"public\".\"publicationLike\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"publicationId\" int4 NOT NULL,\n  \"userId\" int4 NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"publicationLike\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"publicationLike\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.publicationLike.publicationLike_publicationId_userId_key",
+    "label": "Add unique constraint on \"publicationLike\" (publicationId, userId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "publicationLike_publicationId_userId_key",
+        "table": "publicationLike"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"publicationLike_publicationId_userId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "publicationLike_publicationId_userId_key",
+          "public",
+          "\"public\".\"publicationLike\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"publicationLike_publicationId_userId_key\"",
+        "sql": "ALTER TABLE \"public\".\"publicationLike\" ADD CONSTRAINT \"publicationLike_publicationId_userId_key\" UNIQUE (\"publicationId\", \"userId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"publicationLike_publicationId_userId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "publicationLike_publicationId_userId_key",
+          "public",
+          "\"public\".\"publicationLike\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.publicationLike.publicationLike_publicationId_idx_9a426279",
+    "label": "Create index \"publicationLike_publicationId_idx_9a426279\" on \"publicationLike\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "publicationLike_publicationId_idx_9a426279",
+        "table": "publicationLike"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"publicationLike_publicationId_idx_9a426279\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"publicationLike_publicationId_idx_9a426279\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"publicationLike_publicationId_idx_9a426279\"",
+        "sql": "CREATE INDEX \"publicationLike_publicationId_idx_9a426279\" ON \"public\".\"publicationLike\" (\"publicationId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"publicationLike_publicationId_idx_9a426279\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"publicationLike_publicationId_idx_9a426279\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.publicationLike.publicationLike_userId_idx_a489d58a",
+    "label": "Create index \"publicationLike_userId_idx_a489d58a\" on \"publicationLike\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "publicationLike_userId_idx_a489d58a",
+        "table": "publicationLike"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"publicationLike_userId_idx_a489d58a\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"publicationLike_userId_idx_a489d58a\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"publicationLike_userId_idx_a489d58a\"",
+        "sql": "CREATE INDEX \"publicationLike_userId_idx_a489d58a\" ON \"public\".\"publicationLike\" (\"userId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"publicationLike_userId_idx_a489d58a\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"publicationLike_userId_idx_a489d58a\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.publicationLike.publicationLike_publicationId_fkey",
+    "label": "Add foreign key \"publicationLike_publicationId_fkey\" on \"publicationLike\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "publicationLike_publicationId_fkey",
+        "table": "publicationLike"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"publicationLike_publicationId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "publicationLike_publicationId_fkey",
+          "public",
+          "\"public\".\"publicationLike\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"publicationLike_publicationId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"publicationLike\"\nADD CONSTRAINT \"publicationLike_publicationId_fkey\"\nFOREIGN KEY (\"publicationId\")\nREFERENCES \"public\".\"publication\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"publicationLike_publicationId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "publicationLike_publicationId_fkey",
+          "public",
+          "\"public\".\"publicationLike\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.publicationLike.publicationLike_userId_fkey",
+    "label": "Add foreign key \"publicationLike_userId_fkey\" on \"publicationLike\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "publicationLike_userId_fkey",
+        "table": "publicationLike"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"publicationLike_userId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "publicationLike_userId_fkey",
+          "public",
+          "\"public\".\"publicationLike\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"publicationLike_userId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"publicationLike\"\nADD CONSTRAINT \"publicationLike_userId_fkey\"\nFOREIGN KEY (\"userId\")\nREFERENCES \"public\".\"user\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"publicationLike_userId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "publicationLike_userId_fkey",
+          "public",
+          "\"public\".\"publicationLike\""
+        ]
+      }
+    ]
+  }
+]

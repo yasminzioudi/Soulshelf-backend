@@ -1,0 +1,122 @@
+[
+  {
+    "id": "table.publication",
+    "label": "Create table \"publication\"",
+    "summary": "Creates table \"publication\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "publication"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"publication\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"publication\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"publication\"",
+        "sql": "CREATE TABLE \"public\".\"publication\" (\n  \"authorId\" int4 NOT NULL,\n  \"content\" text,\n  \"coverUrl\" text,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"description\" text,\n  \"genre\" text NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"language\" text DEFAULT 'English',\n  \"pages\" int4,\n  \"publishedYear\" int4,\n  \"title\" text NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"publication\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"publication\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.publication.publication_authorId_idx_e47547ed",
+    "label": "Create index \"publication_authorId_idx_e47547ed\" on \"publication\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "publication_authorId_idx_e47547ed",
+        "table": "publication"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"publication_authorId_idx_e47547ed\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"publication_authorId_idx_e47547ed\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"publication_authorId_idx_e47547ed\"",
+        "sql": "CREATE INDEX \"publication_authorId_idx_e47547ed\" ON \"public\".\"publication\" (\"authorId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"publication_authorId_idx_e47547ed\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"publication_authorId_idx_e47547ed\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.publication.publication_authorId_fkey",
+    "label": "Add foreign key \"publication_authorId_fkey\" on \"publication\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "publication_authorId_fkey",
+        "table": "publication"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"publication_authorId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "publication_authorId_fkey",
+          "public",
+          "\"public\".\"publication\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"publication_authorId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"publication\"\nADD CONSTRAINT \"publication_authorId_fkey\"\nFOREIGN KEY (\"authorId\")\nREFERENCES \"public\".\"user\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"publication_authorId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "publication_authorId_fkey",
+          "public",
+          "\"public\".\"publication\""
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,212 @@
+[
+  {
+    "id": "column.public.book.language",
+    "label": "Add column \"language\" to \"book\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "language",
+        "table": "book"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"language\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "book",
+          "language"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"language\"",
+        "sql": "ALTER TABLE \"public\".\"book\" ADD COLUMN \"language\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"language\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "book",
+          "language"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.book.pages",
+    "label": "Add column \"pages\" to \"book\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "pages",
+        "table": "book"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"pages\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "book",
+          "pages"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"pages\"",
+        "sql": "ALTER TABLE \"public\".\"book\" ADD COLUMN \"pages\" int4"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"pages\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "book",
+          "pages"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.book.publishedYear",
+    "label": "Add column \"publishedYear\" to \"book\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "publishedYear",
+        "table": "book"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"publishedYear\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "book",
+          "publishedYear"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"publishedYear\"",
+        "sql": "ALTER TABLE \"public\".\"book\" ADD COLUMN \"publishedYear\" int4"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"publishedYear\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "book",
+          "publishedYear"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.user.bio",
+    "label": "Add column \"bio\" to \"user\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "bio",
+        "table": "user"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"bio\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "user",
+          "bio"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"bio\"",
+        "sql": "ALTER TABLE \"public\".\"user\" ADD COLUMN \"bio\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"bio\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "user",
+          "bio"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.user.occupation",
+    "label": "Add column \"occupation\" to \"user\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "occupation",
+        "table": "user"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"occupation\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "user",
+          "occupation"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"occupation\"",
+        "sql": "ALTER TABLE \"public\".\"user\" ADD COLUMN \"occupation\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"occupation\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "user",
+          "occupation"
+        ]
+      }
+    ]
+  }
+]

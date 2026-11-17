@@ -1,0 +1,252 @@
+// use prisma-next
+
+model User {
+  id            Int            @id @default(autoincrement())
+  email         String         @unique
+  passwordHash  String?
+  name          String?
+  avatarUrl     String?
+  occupation    String?
+  bio           String?
+  googleId      String?        @unique
+  createdAt     TimestamptzString @default(now())
+  updatedAt     temporal.updatedAtString()
+
+  refreshTokens RefreshToken[]
+  passwordResetCodes PasswordResetCode[]
+  userBooks     UserBook[]
+  favorites     Favorite[]
+  readingProgress ReadingProgress[]
+  reviews       Review[]
+  sentFriendRequests     FriendRequest[] @relation("SentFriendRequests")
+  receivedFriendRequests FriendRequest[] @relation("ReceivedFriendRequests")
+  publications           Publication[]
+  followers              Follow[]        @relation("UserFollowers")
+  following              Follow[]        @relation("UserFollowing")
+  likedPublications      PublicationLike[]
+  conversationMembers    ConversationMember[]
+  sentMessages           Message[]
+}
+
+model Publication {
+  id            Int               @id @default(autoincrement())
+  authorId      Int
+  title         String
+  description   String?
+  genre         String
+  language      String?           @default("English")
+  publishedYear Int?
+  pages         Int?
+  coverUrl      String?
+  content       String?
+  createdAt     TimestamptzString @default(now())
+  updatedAt     temporal.updatedAtString()
+
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  likes  PublicationLike[]
+
+  @@index([authorId])
+}
+
+model PublicationLike {
+  id            Int               @id @default(autoincrement())
+  userId        Int
+  publicationId Int
+  createdAt     TimestamptzString @default(now())
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  publication Publication @relation(fields: [publicationId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, publicationId])
+  @@index([publicationId])
+  @@index([userId])
+}
+
+model Follow {
+  id          Int               @id @default(autoincrement())
+  followerId  Int
+  followingId Int
+  createdAt   TimestamptzString @default(now())
+
+  follower  User @relation("UserFollowing", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("UserFollowers", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
+}
+
+model Conversation {
+  id        Int                @id @default(autoincrement())
+  createdAt TimestamptzString  @default(now())
+  updatedAt temporal.updatedAtString()
+
+  members  ConversationMember[]
+  messages Message[]
+}
+
+model ConversationMember {
+  id             Int               @id @default(autoincrement())
+  conversationId Int
+  userId         Int
+  createdAt      TimestamptzString @default(now())
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([conversationId, userId])
+  @@index([userId])
+  @@index([conversationId])
+}
+
+model Message {
+  id             Int               @id @default(autoincrement())
+  conversationId Int
+  senderId       Int
+  content        String
+  createdAt      TimestamptzString @default(now())
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender       User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+  @@index([senderId])
+}
+
+model FriendRequest {
+  id         Int               @id @default(autoincrement())
+  senderId   Int
+  receiverId Int
+  status     String            @default("PENDING")
+  createdAt  TimestamptzString @default(now())
+  updatedAt  temporal.updatedAtString()
+
+  sender   User @relation("SentFriendRequests", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User @relation("ReceivedFriendRequests", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@unique([senderId, receiverId])
+  @@index([senderId])
+  @@index([receiverId])
+  @@index([status])
+}
+
+model RefreshToken {
+  id         Int            @id @default(autoincrement())
+  tokenHash  String         @unique
+  userId     Int
+  expiresAt  TimestamptzString
+  revokedAt  TimestamptzString?
+  createdAt  TimestamptzString @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model PasswordResetCode {
+  id         Int            @id @default(autoincrement())
+  userId     Int
+  codeHash   String
+  expiresAt  TimestamptzString
+  usedAt     TimestamptzString?
+  createdAt  TimestamptzString @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([codeHash])
+}
+
+model Book {
+  id            Int            @id @default(autoincrement())
+  title         String
+  genre         String?
+  author        String?
+  coverColor    String?
+  coverImage    String?
+  publishedYear Int?
+  language      String?
+  pages         Int?
+  isFeatured    Boolean        @default(false)
+  createdAt     TimestamptzString @default(now())
+
+  userBooks  UserBook[]
+  favorites  Favorite[]
+  chapters   Chapter[]
+  readingProgress ReadingProgress[]
+  reviews    Review[]
+
+  @@index([isFeatured])
+}
+
+model UserBook {
+  id        Int            @id @default(autoincrement())
+  userId    Int
+  bookId    Int
+  status    String         @default("OWNED")
+  addedAt   TimestamptzString @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, bookId])
+  @@index([userId])
+}
+
+model Favorite {
+  id        Int               @id @default(autoincrement())
+  userId    Int
+  bookId    Int
+  createdAt TimestamptzString @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, bookId])
+  @@index([userId])
+}
+
+model Chapter {
+  id          Int               @id @default(autoincrement())
+  bookId      Int
+  chapterNum  Int
+  title       String
+  content     String
+  createdAt   TimestamptzString @default(now())
+
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  @@unique([bookId, chapterNum])
+  @@index([bookId])
+}
+
+model ReadingProgress {
+  id             Int               @id @default(autoincrement())
+  userId         Int
+  bookId         Int
+  currentChapter Int               @default(1)
+  updatedAt      temporal.updatedAtString()
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, bookId])
+  @@index([userId])
+}
+
+model Review {
+  id        Int               @id @default(autoincrement())
+  userId    Int
+  bookId    Int
+  rating    Int
+  comment   String?
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, bookId])
+  @@index([bookId])
+  @@index([userId])
+}

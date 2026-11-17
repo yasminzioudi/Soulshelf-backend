@@ -1,0 +1,86 @@
+[
+  {
+    "id": "dropConstraint.publicationLike.publicationLike_publicationId_userId_key",
+    "label": "Drop constraint \"publicationLike_publicationId_userId_key\" on \"publicationLike\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "publicationLike_publicationId_userId_key",
+        "table": "publicationLike"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"publicationLike_publicationId_userId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "publicationLike_publicationId_userId_key",
+          "public",
+          "\"public\".\"publicationLike\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop constraint \"publicationLike_publicationId_userId_key\"",
+        "sql": "ALTER TABLE \"public\".\"publicationLike\" DROP CONSTRAINT \"publicationLike_publicationId_userId_key\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"publicationLike_publicationId_userId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "publicationLike_publicationId_userId_key",
+          "public",
+          "\"public\".\"publicationLike\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.publicationLike.publicationLike_userId_publicationId_key",
+    "label": "Add unique constraint on \"publicationLike\" (userId, publicationId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "publicationLike_userId_publicationId_key",
+        "table": "publicationLike"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"publicationLike_userId_publicationId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "publicationLike_userId_publicationId_key",
+          "public",
+          "\"public\".\"publicationLike\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"publicationLike_userId_publicationId_key\"",
+        "sql": "ALTER TABLE \"public\".\"publicationLike\" ADD CONSTRAINT \"publicationLike_userId_publicationId_key\" UNIQUE (\"userId\", \"publicationId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"publicationLike_userId_publicationId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "publicationLike_userId_publicationId_key",
+          "public",
+          "\"public\".\"publicationLike\""
+        ]
+      }
+    ]
+  }
+]

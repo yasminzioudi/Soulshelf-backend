@@ -1,0 +1,284 @@
+[
+  {
+    "id": "table.friendRequest",
+    "label": "Create table \"friendRequest\"",
+    "summary": "Creates table \"friendRequest\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "friendRequest"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"friendRequest\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"friendRequest\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"friendRequest\"",
+        "sql": "CREATE TABLE \"public\".\"friendRequest\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"receiverId\" int4 NOT NULL,\n  \"senderId\" int4 NOT NULL,\n  \"status\" text DEFAULT 'PENDING' NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"friendRequest\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"friendRequest\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.friendRequest.friendRequest_senderId_receiverId_key",
+    "label": "Add unique constraint on \"friendRequest\" (senderId, receiverId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "friendRequest_senderId_receiverId_key",
+        "table": "friendRequest"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"friendRequest_senderId_receiverId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "friendRequest_senderId_receiverId_key",
+          "public",
+          "\"public\".\"friendRequest\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"friendRequest_senderId_receiverId_key\"",
+        "sql": "ALTER TABLE \"public\".\"friendRequest\" ADD CONSTRAINT \"friendRequest_senderId_receiverId_key\" UNIQUE (\"senderId\", \"receiverId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"friendRequest_senderId_receiverId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "friendRequest_senderId_receiverId_key",
+          "public",
+          "\"public\".\"friendRequest\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.friendRequest.friendRequest_receiverId_idx_fe124f44",
+    "label": "Create index \"friendRequest_receiverId_idx_fe124f44\" on \"friendRequest\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "friendRequest_receiverId_idx_fe124f44",
+        "table": "friendRequest"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"friendRequest_receiverId_idx_fe124f44\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"friendRequest_receiverId_idx_fe124f44\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"friendRequest_receiverId_idx_fe124f44\"",
+        "sql": "CREATE INDEX \"friendRequest_receiverId_idx_fe124f44\" ON \"public\".\"friendRequest\" (\"receiverId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"friendRequest_receiverId_idx_fe124f44\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"friendRequest_receiverId_idx_fe124f44\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.friendRequest.friendRequest_senderId_idx_4689c490",
+    "label": "Create index \"friendRequest_senderId_idx_4689c490\" on \"friendRequest\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "friendRequest_senderId_idx_4689c490",
+        "table": "friendRequest"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"friendRequest_senderId_idx_4689c490\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"friendRequest_senderId_idx_4689c490\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"friendRequest_senderId_idx_4689c490\"",
+        "sql": "CREATE INDEX \"friendRequest_senderId_idx_4689c490\" ON \"public\".\"friendRequest\" (\"senderId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"friendRequest_senderId_idx_4689c490\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"friendRequest_senderId_idx_4689c490\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.friendRequest.friendRequest_status_idx_e98638ab",
+    "label": "Create index \"friendRequest_status_idx_e98638ab\" on \"friendRequest\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "friendRequest_status_idx_e98638ab",
+        "table": "friendRequest"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"friendRequest_status_idx_e98638ab\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"friendRequest_status_idx_e98638ab\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"friendRequest_status_idx_e98638ab\"",
+        "sql": "CREATE INDEX \"friendRequest_status_idx_e98638ab\" ON \"public\".\"friendRequest\" (\"status\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"friendRequest_status_idx_e98638ab\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"friendRequest_status_idx_e98638ab\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.friendRequest.friendRequest_senderId_fkey",
+    "label": "Add foreign key \"friendRequest_senderId_fkey\" on \"friendRequest\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "friendRequest_senderId_fkey",
+        "table": "friendRequest"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"friendRequest_senderId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "friendRequest_senderId_fkey",
+          "public",
+          "\"public\".\"friendRequest\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"friendRequest_senderId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"friendRequest\"\nADD CONSTRAINT \"friendRequest_senderId_fkey\"\nFOREIGN KEY (\"senderId\")\nREFERENCES \"public\".\"user\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"friendRequest_senderId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "friendRequest_senderId_fkey",
+          "public",
+          "\"public\".\"friendRequest\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.friendRequest.friendRequest_receiverId_fkey",
+    "label": "Add foreign key \"friendRequest_receiverId_fkey\" on \"friendRequest\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "friendRequest_receiverId_fkey",
+        "table": "friendRequest"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"friendRequest_receiverId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "friendRequest_receiverId_fkey",
+          "public",
+          "\"public\".\"friendRequest\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"friendRequest_receiverId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"friendRequest\"\nADD CONSTRAINT \"friendRequest_receiverId_fkey\"\nFOREIGN KEY (\"receiverId\")\nREFERENCES \"public\".\"user\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"friendRequest_receiverId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "friendRequest_receiverId_fkey",
+          "public",
+          "\"public\".\"friendRequest\""
+        ]
+      }
+    ]
+  }
+]
